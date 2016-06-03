@@ -27,22 +27,23 @@ typedef struct date date_t;
 void add_product(){
 	FILE *fe = fopen("Ficheiro de existencias", "a+");
 	FILE *fp = fopen("Ficheiro de produtos", "a+");
+
 	product_t d;
 	date_t a;
 
 
 
 	printf("Nome do ficheiro: ");
-	scanf("%s", d.name);
+	scanf(" %[^\n]s", d.name);
 
 	printf("Descricao: ");
-	scanf("%s", d.description);
+	scanf(" %[^\n]s", d.description);
 
 	printf("Referencia interna: ");
 	scanf("%i", &d.refcode);
 
 	printf("Estado: ");
-	scanf("%s", d.status);
+	scanf(" %s[^\n]", d.status);
 
 	printf("Quantidade: ");
 	scanf("%i", &d.quantity);
@@ -62,27 +63,103 @@ void print_files(){
 	FILE *fe = fopen("Ficheiro de existencias", "r");
 	FILE *fp = fopen("Ficheiro de produtos", "r");
 
-	product_t d;
+	if (fp == NULL) {
+	printf("Erro ao abrir ficheiro \n");
+	return;
+	}
 
-	fread(&d, sizeof(d), 1, fe);
-	fread(&d, sizeof(d), 1, fp);
+	if (fe == NULL) {
+	printf("Erro ao abrir ficheiro \n");
+	return;
+	}
+
+	product_t d;
 
 	printf("--------------Inventario:--------------\n");
 	printf("Nome do produto\t\tQuantidade\n");
-	printf("%s\t\t\t%i\n\n", d.name, d.quantity);
+	while(fread(&d, sizeof(d), 1, fe)>0){
+	while(fread(&d, sizeof(d), 1, fp)>0){
+
+	printf("%s\t\t\t%i\n", d.name, d.quantity);
+	}
+	}
+	printf("_______________________________________\n");
 
 	fclose(fe);
 	fclose(fp);
 
 }
 
+product_t search_files(char *Name){
+	FILE *fp = fopen("Ficheiro de produtos", "r");
+
+	product_t d;
+
+	while(fread(&d, sizeof(d), 1, fp) > 0){
+		if(strcmp(d.name, Name) == 0){
+			break;
+		}
+	}
+	fclose(fp);
+	return d;
+}
+
+void delete_entry(){
+
+}
+
+void help(){ //Need help!!! Como voltar atrás depois de pedir a ajuda nesta opção, para voltar até ao menu help e/ou até ao menu menu
+	int ch;
+
+	printf("\nMenu ajuda:\n\n");
+	printf("1 - Ver produtos em stock\n");
+	printf("2 - Adicionar novo produto\n");
+	printf("3 - Alterar dados de um produto existente\n");
+	printf("4 - Registar entrada de produtos em armazem\n");
+	printf("5 - Registar saida de produtos\n");
+	printf("6 - Verificar os movimentos de entradas e saidas de um produto\n\n");
+	printf("0 - Voltar ao Menu Inicial");
+
+	printf("Em que opcao necessita de ajuda? \n");
+	scanf("%i", &ch);
+
+	if(ch == 1){
+		printf("Esta opcao vai fazer com que todos os produtos sejam mostrados no ecra. \nSera apenas visualizado o nome e a quantidade em stock de tais produtos.\n");
+		printf("_______________________________________________________________________\n");
+	}
+	if(ch == 2){
+		printf("Esta opcao serve para adicionar ao ficheiro um novo produto. Serao pedidas\n todas as informacoes necessarias (nome, descricao, referencia interna, estado, quantidade e data.\n");
+		printf("_______________________________________________________________________\n");
+	}
+	if(ch == 3){
+		printf("Esta opcao serve para alterar dados de um produto ja existente no ficheiro.\n Tera de escrever o nome do ficheiro que deseja alterar e posteriormente introduzir todas as informacoes sobre o mesmo.\n");
+		printf("_______________________________________________________________________\n");
+	}
+	if(ch == 4){
+		printf("Esta opcao serve para adicionar uma certa quantidade a um produto existente\n no ficheiro. Deve pesquisar pelo nome do produto em causa e posteriormente registar o numero a ser somada à quantidade já existente\n");
+		printf("_______________________________________________________________________\n");
+	}
+	if(ch == 5){
+		printf("Esta opcao serve para registar saidas de produto do armazem. Deve pesquisar\n pelo nome do produto em causa e posteriormente registar o numero que deseja subtrair à quantidade já existente.\n");
+		printf("_______________________________________________________________________\n");
+	}
+	if(ch == 6){
+		printf("Esta opcao vai fazer com que o programa mostre os movimentos de entrada e\n saida do armazem, de um produto. Deve pesquisar pelo produto em causa e posteriormente todos os movimentos serão mostrados no ecrã.\n");
+		printf("_______________________________________________________________________\n");
+	}
+}
 
 //____________________________________MAIN_______________________________________________//
 
 int main(){
 	int dummy;
+	char Name[200];
+
+	product_t d;
+	date_t a;
 
 do{
+
 
 	printf("Menu:\n");
 	printf("1 - Ver produtos em stock\n");
@@ -92,7 +169,7 @@ do{
 	printf("5 - Registar saida de produtos\n");
 	printf("6 - Registar os movimentos de entradas e saidas de um produto\n");
 	printf("7 - Ajuda\n");
-	printf("8 - Sair\n\n");
+	printf("0 - Sair\n\n");
 
 
 	printf("Escolha: ");
@@ -105,8 +182,18 @@ if(dummy == 1){
 if(dummy == 2){
 	add_product();
 }
+if(dummy == 3){
+	printf("Alterar dados de um produto\n\n");
+	printf("Pesquisar produto: ");
+	scanf(" %[^\n]s", Name);
+	d = search_files(Name);
 
 
-}while(dummy != 8);
+}
+if(dummy==7){
+	help();
+}
+
+}while(dummy != 0);
 
 }
