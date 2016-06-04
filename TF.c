@@ -104,9 +104,22 @@ product_t search_files(char *Name){
 	return d;
 }
 
-void delete_entry(){
+void delete_entry(product_t d){
+	FILE *fe = fopen("Ficheiro de existencias", "r");
+	FILE *fh = fopen("Helper File", "w");
 
+	product_t ch = NULL;
+	int delete_line;
+
+	fread((&ch, sizeof(ch), 1, fe)>0);
+	while(ch != EOF){
+		if(strcmp(ch.name, d.name) == 0){
+		}
+	fclose(fe);
+	fclose(fh);
 }
+
+
 
 void help(){ //Need help!!! Como voltar atrás depois de pedir a ajuda nesta opção, para voltar até ao menu help e/ou até ao menu menu
 	int ch;
@@ -156,7 +169,6 @@ int main(){
 	char Name[200];
 
 	product_t d;
-	date_t a;
 
 do{
 
@@ -187,6 +199,7 @@ if(dummy == 3){
 	printf("Pesquisar produto: ");
 	scanf(" %[^\n]s", Name);
 	d = search_files(Name);
+	delete_entry(d);
 
 
 }
