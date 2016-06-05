@@ -116,9 +116,34 @@ void delete_entry(product_t d){
 		}else{
 			fwrite(&ch, sizeof(d), 1, fh);
 		}
+		remove("Ficheiro existencias");
+		rename("Helper File", "Ficheiro de existencias");
 	}
 	fclose(fe);
 	fclose(fh);
+}
+
+product_t change_details(){
+
+	product_t d;
+	date_t a;
+
+	printf("Descricao: ");
+	scanf(" %[^\n]s", d.description);
+
+	printf("Referencia interna: ");
+	scanf("%i", &d.refcode);
+
+	printf("Estado: ");
+	scanf(" %s[^\n]", d.status);
+
+	printf("Quantidade: ");
+	scanf("%i", &d.quantity);
+
+	printf("Data (dd-mm-aaaa): ");
+	scanf("%i-%i-%i", &a.day, &a.month, &a.year);
+
+	return d;
 }
 
 
@@ -202,7 +227,9 @@ if(dummy == 3){
 	printf("Pesquisar produto: ");
 	scanf(" %[^\n]s", Name);
 	d = search_files(Name);
+	d = change_details();
 	delete_entry(d);
+	printf("\nProduto alterado com sucesso!\n\n");
 }
 if(dummy==7){
 	help();
