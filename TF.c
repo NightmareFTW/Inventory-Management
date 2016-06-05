@@ -108,20 +108,22 @@ void delete_entry(product_t d){
 	FILE *fe = fopen("Ficheiro de existencias", "r");
 	FILE *fh = fopen("Helper File", "w");
 
-	product_t ch = NULL;
-	int delete_line;
+	product_t ch;
 
-	fread((&ch, sizeof(ch), 1, fe)>0);
-	while(ch != EOF){
+	while (fread(&ch, sizeof(ch), 1, fe) > 0) {
 		if(strcmp(ch.name, d.name) == 0){
+			fwrite(&d, sizeof(d), 1, fh);
+		}else{
+			fwrite(&ch, sizeof(d), 1, fh);
 		}
+	}
 	fclose(fe);
 	fclose(fh);
 }
 
 
 
-void help(){ //Need help!!! Como voltar atrás depois de pedir a ajuda nesta opção, para voltar até ao menu help e/ou até ao menu menu
+void help(){
 	int ch;
 
 	printf("\nMenu ajuda:\n\n");
@@ -131,10 +133,11 @@ void help(){ //Need help!!! Como voltar atrás depois de pedir a ajuda nesta op�
 	printf("4 - Registar entrada de produtos em armazem\n");
 	printf("5 - Registar saida de produtos\n");
 	printf("6 - Verificar os movimentos de entradas e saidas de um produto\n\n");
-	printf("0 - Voltar ao Menu Inicial");
 
-	printf("Em que opcao necessita de ajuda? \n");
+	printf("Em que opcao necessita de ajuda? ");
 	scanf("%i", &ch);
+
+	printf("\n");
 
 	if(ch == 1){
 		printf("Esta opcao vai fazer com que todos os produtos sejam mostrados no ecra. \nSera apenas visualizado o nome e a quantidade em stock de tais produtos.\n");
@@ -200,11 +203,12 @@ if(dummy == 3){
 	scanf(" %[^\n]s", Name);
 	d = search_files(Name);
 	delete_entry(d);
-
-
 }
 if(dummy==7){
 	help();
+}
+if(dummy == 0){
+	exit(0);
 }
 
 }while(dummy != 0);
