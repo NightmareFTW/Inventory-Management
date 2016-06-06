@@ -3,24 +3,25 @@
 #include <string.h>
 
 /*----------------------------------Structs-------------------------------------------*/
-struct detail_s{
+
+typedef struct date_s {
+		int day;
+		int month;
+		int year;
+	} date_t;
+
+typedef struct product_s {
 		char name[100];
 		char description[300];
 		char status[100];
 		int refcode;
+	} product_t;
+
+typedef struct product_quantity_s {
+		int refcode;
 		int quantity;
-	};
-
-struct date{
-		int day;
-		int month;
-		int year;
-	};
-
-//								   typedef
-
-typedef struct detail_s product_t;
-typedef struct date date_t;
+		date_t date;
+	} product_quantity_t;
 
 /*---------------------------Funções auxiliares------------------------------------*/
 
@@ -30,8 +31,9 @@ void add_product(){
 
 	product_t d;
 	date_t a;
+	product_quantity_t b;
 
-
+	b.date = a;
 
 	printf("Nome do ficheiro: ");
 	scanf(" %[^\n]s", d.name);
@@ -46,16 +48,30 @@ void add_product(){
 	scanf(" %s[^\n]", d.status);
 
 	printf("Quantidade: ");
-	scanf("%i", &d.quantity);
+	scanf("%i", &b.quantity);
 
 	printf("Data (dd-mm-aaaa): ");
 	scanf("%i-%i-%i", &a.day, &a.month, &a.year);
 
-	fwrite(&d, sizeof(d), 1, fe);
+	fwrite(&b, sizeof(b), 1, fe);
 	fwrite(&d, sizeof(d), 1, fp);
 
 	fclose(fp);
 	fclose(fe);
+}
+
+product_quantity_t search_refcode(int refcode) {
+	FILE *fe = fopen("Ficheiro de existencias", "r");
+
+	product_quantity_t b;
+
+	while(fread(&b, sizeof(b), 1, fe) > 0){
+		if(b.refcode == refcode){
+			break;
+		}
+	}
+	fclose(fe);
+	return b;
 }
 
 void print_files(){
@@ -73,15 +89,16 @@ void print_files(){
 	return;
 	}
 
+
 	product_t d;
+	product_quantity_t b;
 
 	printf("--------------Inventario:--------------\n");
 	printf("Nome do produto\t\tQuantidade\n");
-	while(fread(&d, sizeof(d), 1, fe)>0){
-	while(fread(&d, sizeof(d), 1, fp)>0){
+	while(fread(&b, sizeof(b), 1, fp)>0){
+		b = search_refcode(d.refcode);
 
-	printf("%s\t\t\t%i\n", d.name, d.quantity);
-	}
+	printf("%s\t\t\t%i\n", d.name, b.quantity);
 	}
 	printf("_______________________________________\n");
 
@@ -110,23 +127,26 @@ void delete_entry(product_t d){
 
 	product_t ch;
 
+
 	while (fread(&ch, sizeof(ch), 1, fe) > 0) {
 		if(strcmp(ch.name, d.name) == 0){
 			fwrite(&d, sizeof(d), 1, fh);
 		}else{
 			fwrite(&ch, sizeof(d), 1, fh);
 		}
-		remove("Ficheiro existencias");
-		rename("Helper File", "Ficheiro de existencias");
 	}
 	fclose(fe);
 	fclose(fh);
+
+	remove("Ficheiro existencias");
+	rename("Helper File", "Ficheiro de existencias");
 }
 
 product_t change_details(){
 
 	product_t d;
 	date_t a;
+	product_quantity_t b;
 
 	printf("Descricao: ");
 	scanf(" %[^\n]s", d.description);
@@ -138,7 +158,7 @@ product_t change_details(){
 	scanf(" %s[^\n]", d.status);
 
 	printf("Quantidade: ");
-	scanf("%i", &d.quantity);
+	scanf("%i", &b.quantity);
 
 	printf("Data (dd-mm-aaaa): ");
 	scanf("%i-%i-%i", &a.day, &a.month, &a.year);
