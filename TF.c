@@ -35,7 +35,7 @@ void add_product(){
 
 	b.date = a;
 
-	printf("Nome do ficheiro: ");
+	printf("Nome do produto: ");
 	scanf(" %[^\n]s", d.name);
 
 	printf("Descricao: ");
@@ -43,6 +43,7 @@ void add_product(){
 
 	printf("Referencia interna: ");
 	scanf("%i", &d.refcode);
+	b.refcode = d.refcode;
 
 	printf("Estado: ");
 	scanf(" %s[^\n]", d.status);
@@ -95,10 +96,9 @@ void print_files(){
 
 	printf("--------------Inventario:--------------\n");
 	printf("Nome do produto\t\tQuantidade\n");
-	while(fread(&b, sizeof(b), 1, fp)>0){
+	while(fread(&d, sizeof(d), 1, fp)>0){
 		b = search_refcode(d.refcode);
-
-	printf("%s\t\t\t%i\n", d.name, b.quantity);
+		printf("%s\t\t\t%i\n", d.name, b.quantity);
 	}
 	printf("_______________________________________\n");
 
@@ -121,52 +121,60 @@ product_t search_files(char *Name){
 	return d;
 }
 
-void delete_entry(product_t d){
+void delete_entry(product_t d, int refcode){
 	FILE *fe = fopen("Ficheiro de existencias", "r");
-	FILE *fh = fopen("Helper File", "w");
+	FILE *fp = fopen("Ficheiro de produtos", "r");
+	FILE *fh = fopen("Helper File Product", "w");
+	FILE *fhh = fopen("Helper File Quantity", "w");
 
 	product_t ch;
+	product_quantity_t b;
 
-
-	while (fread(&ch, sizeof(ch), 1, fe) > 0) {
+	while (fread(&ch, sizeof(ch), 1, fp) > 0) {
 		if(strcmp(ch.name, d.name) == 0){
 			fwrite(&d, sizeof(d), 1, fh);
 		}else{
 			fwrite(&ch, sizeof(d), 1, fh);
 		}
 	}
+	while (fread(&b, sizeof(b), 1, fe) > 0) {
+		if(b.refcode == refcode){
+			fwrite(&b, sizeof(b), 1, fhh);
+		}else{
+			fwrite(&b, sizeof(b), 1, fhh);
+		}
+	}
+
+	fclose(fp);
 	fclose(fe);
 	fclose(fh);
+	fclose(fhh);
 
 	remove("Ficheiro existencias");
-	rename("Helper File", "Ficheiro de existencias");
+	remove("Ficheiro de produtos");
+	rename("Helper File Product", "Ficheiro de produtos");
+	rename("Helper File Quantity", "Ficheiro de existencias");
 }
 
-product_t change_details(){
+void change_details(product_t *d, product_quantity_t *b){
 
-	product_t d;
 	date_t a;
-	product_quantity_t b;
 
 	printf("Descricao: ");
-	scanf(" %[^\n]s", d.description);
+	scanf(" %[^\n]s", (*d).description);
 
 	printf("Referencia interna: ");
-	scanf("%i", &d.refcode);
+	scanf("%i", &(*d).refcode);
 
 	printf("Estado: ");
-	scanf(" %s[^\n]", d.status);
+	scanf(" %s[^\n]", (*d).status);
 
 	printf("Quantidade: ");
-	scanf("%i", &b.quantity);
+	scanf("%i", &(*b).quantity);
 
 	printf("Data (dd-mm-aaaa): ");
 	scanf("%i-%i-%i", &a.day, &a.month, &a.year);
-
-	return d;
 }
-
-
 
 void help(){
 	int ch;
@@ -217,9 +225,9 @@ int main(){
 	char Name[200];
 
 	product_t d;
+	product_quantity_t b;
 
 do{
-
 
 	printf("Menu:\n");
 	printf("1 - Ver produtos em stock\n");
@@ -247,7 +255,8 @@ if(dummy == 3){
 	printf("Pesquisar produto: ");
 	scanf(" %[^\n]s", Name);
 	d = search_files(Name);
-	d = change_details();
+	b = search_refcode(d.refcode);
+	change_details(&d, &b);
 	delete_entry(d);
 	printf("\nProduto alterado com sucesso!\n\n");
 }
