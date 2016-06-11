@@ -25,7 +25,7 @@ typedef struct product_quantity_s {
 
 /*---------------------------Funções auxiliares------------------------------------*/
 
-void add_product(){
+void add_product(){ //Adiciona um produto aos ficheiros fe e fp
 	FILE *fe = fopen("Ficheiro de existencias", "a+");
 	FILE *fp = fopen("Ficheiro de produtos", "a+");
 
@@ -61,7 +61,7 @@ void add_product(){
 	fclose(fe);
 }
 
-product_quantity_t search_refcode(int refcode) {
+product_quantity_t search_refcode(int refcode) { // Pesquisa o refcode e devolve b
 	FILE *fe = fopen("Ficheiro de existencias", "r");
 
 	product_quantity_t b;
@@ -75,7 +75,7 @@ product_quantity_t search_refcode(int refcode) {
 	return b;
 }
 
-void print_files(){
+void print_files(){ //Mostra no ecrã o nome e a quantidade de todos os produtos em stock
 
 	FILE *fe = fopen("Ficheiro de existencias", "r");
 	FILE *fp = fopen("Ficheiro de produtos", "r");
@@ -96,7 +96,7 @@ void print_files(){
 
 	printf("--------------Inventario:--------------\n");
 	printf("Nome do produto\t\tQuantidade\n");
-	while(fread(&d, sizeof(d), 1, fp)>0){
+	while(fread(&d, sizeof(d), 1, fp) > 0){
 		b = search_refcode(d.refcode);
 		printf("%s\t\t\t%i\n", d.name, b.quantity);
 	}
@@ -107,7 +107,7 @@ void print_files(){
 
 }
 
-product_t search_files(char *Name){
+product_t search_files(char *Name){ // Pesquisa um produto no ficheiro fp pelo nome do mesmo e devolve d
 	FILE *fp = fopen("Ficheiro de produtos", "r");
 
 	product_t d;
@@ -121,7 +121,7 @@ product_t search_files(char *Name){
 	return d;
 }
 
-void delete_entry(product_t d, int refcode){
+void delete_entry(product_t d, product_quantity_t refcode){ // Altera os dados de um produto
 	FILE *fe = fopen("Ficheiro de existencias", "r");
 	FILE *fp = fopen("Ficheiro de produtos", "r");
 	FILE *fh = fopen("Helper File Product", "w");
@@ -138,7 +138,7 @@ void delete_entry(product_t d, int refcode){
 		}
 	}
 	while (fread(&b, sizeof(b), 1, fe) > 0) {
-		if(b.refcode == refcode){
+		if(b.refcode == refcode.refcode){
 			fwrite(&b, sizeof(b), 1, fhh);
 		}else{
 			fwrite(&b, sizeof(b), 1, fhh);
@@ -156,7 +156,7 @@ void delete_entry(product_t d, int refcode){
 	rename("Helper File Quantity", "Ficheiro de existencias");
 }
 
-void change_details(product_t *d, product_quantity_t *b){
+void change_details(product_t *d, product_quantity_t *b){ // Pedido ao utilizador dos dados novos para a alteração
 
 	date_t a;
 
@@ -176,7 +176,7 @@ void change_details(product_t *d, product_quantity_t *b){
 	scanf("%i-%i-%i", &a.day, &a.month, &a.year);
 }
 
-void help(){
+void help(){ // Menu ajuda, tudo o que é preciso na opção help, está aqui!
 	int ch;
 
 	printf("\nMenu ajuda:\n\n");
@@ -257,7 +257,7 @@ if(dummy == 3){
 	d = search_files(Name);
 	b = search_refcode(d.refcode);
 	change_details(&d, &b);
-	delete_entry(d);
+	delete_entry(d, b);
 	printf("\nProduto alterado com sucesso!\n\n");
 }
 if(dummy==7){
