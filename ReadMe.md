@@ -41,7 +41,7 @@ O programa a desenvolver deve ainda:
 - O trabalho deve ser acompanhado de um relatório explicativo de, no máximo, 10 páginas, segundo o modelo fornecido. Esse relatório deve incidir obrigatoriamente sobre os algoritmos principais, explicando-os com recurso a fluxogramas ou pseudocódigo. Deve explicar o funcionamento do programa na perspetiva do utilizador e do programador.
 - O relatório deverá seguir o modelo disponibilizado.
 - O código do trabalho e o relatório devem ser submetidos no elearning, em ficheiro  compactado com zip, gzip ou bzip2, num só ficheiro.
-- O prazo de entrega é definido no elearning.
+- O prazo de entrega é definido no elearning. 
 
 Trabalhos entregues depois desta data não serão considerados.  
 - O trabalho deverá estar sujeito a uma apresentação, em data a ser marcada. Esta apresentação deve incluir uma explicação do trabalho e uma demonstração de funcionalidades. Em anexo é disponibilizado um modelo de diapositivos a usar na apresentação.
